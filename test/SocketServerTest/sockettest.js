@@ -12,9 +12,9 @@
 
 // //원격에서(안드로이드 클라이언트에서) 접속이 되면 기본적으로 실행하는 코드
 // //'connection' : socket.io의 기본 이벤트, 사용자가 웹사이트에 접속하면 자동으로 발생하는 이벤트
-// io.on('connection', function (socket) {
-//     // var addr = socket.address();
-//     // console.log('클라이언트 접속됨.%s, %d',addr.address,addr.port)
+// io.sockets.on('connection', function (socket) {
+//     var addr = socket.address();
+//     console.log('클라이언트 접속됨.%s, %d',addr.address,addr.port)
 //     socket.emit('message_fron_server', 'socketTest with android');
 
 //     //메세지를 받으면 응답
@@ -26,10 +26,10 @@
 //     })
 // });
 
-// var http = require('http');
+var http = require('http');
 
-// // 서버 객체 만들기
-// var server =http.createServer();
+// 서버 객체 만들기
+var server =http.createServer();
 
 var port = 3000;
 server.listen(port,function(){
