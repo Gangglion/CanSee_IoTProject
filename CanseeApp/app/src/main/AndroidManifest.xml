@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.IoTProject.canseeapp">
+    
+    <uses-permission android:name="android.permission.INTERNET"/>
+    
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -10,14 +13,17 @@
             android:theme="@style/Theme.CanseeApp"
             android:usesCleartextTraffic="true">
         <activity
+                android:name=".VideolistActivity"
+                android:exported="true"/>
+        <activity
                 android:name=".InputInfoActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
+    
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
     </application>
-    <uses-permission android:name="android.permission.INTERNET"/>
+
 </manifest>
