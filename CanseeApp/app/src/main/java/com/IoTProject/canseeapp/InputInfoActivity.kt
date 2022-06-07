@@ -1,6 +1,7 @@
 package com.IoTProject.canseeapp
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat.startActivity
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -27,20 +29,37 @@ class InputInfoActivity : AppCompatActivity() {
         confirm_btn.setOnClickListener {
             var inputAddress : String = addressinput.text.toString()
             var inputPort : String = portinput.text.toString()
+
             var socketTh = SocketThread(inputAddress,inputPort)
             var t = Thread(socketTh)
             t.start()
+
             Thread.sleep(500)
             if(SocketClass.getSocketStatus())
             {
-                var intent = Intent(this,VideolistActivity::class.java)
-                startActivity(intent)
+                Log.d("connect status","성공")
+                // 화면이 로드됨과 동시에 소켓의 상태가 연결중이라면 서버로부터 파일목록 불러오라는 이벤트 발생
+                SocketClass.socket.emit("ReqFilelist")
+                SocketClass.callbackVideolist(ProcessRes = {
+                    var intent = Intent(this,VideolistActivity::class.java)
+                    startActivity(intent)
+                })
+            }
+            else{
+                Log.d("connect status","실패")
+                addressinput.text.clear()
+                portinput.text.clear()
+
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("접속 오류")
+                builder.setMessage("접속하려는 주소와 포트를 확인 후 다시 입력하세요")
+                builder.setPositiveButton("확인") { dialogInterface: DialogInterface, i: Int ->     }
+                builder.show()
             }
         }
 
     }
     class SocketThread(address:String,port:String) : Runnable{
-        lateinit var socket: Socket
         var address : String
         var port : String
 
@@ -50,11 +69,12 @@ class InputInfoActivity : AppCompatActivity() {
         }
         override fun run() {
             try{
-                socket = SocketClass.get(address,port)
-                socket.connect()
+                SocketClass.socket = SocketClass.get(address,port)
             }catch(e:Exception){
                 Log.e("Socketerr","Error")
             }
+            SocketClass.socket.connect()
+            SocketClass.socket.emit("client_ConnSuccess","Success")
         }
     }
 }
