@@ -36,7 +36,7 @@ class SocketClass() {
             socket.disconnect()
         }
 
-        val requestFileArray : Emitter.Listener = Emitter.Listener{
+        private val requestFileArray : Emitter.Listener = Emitter.Listener{
             Log.d("Socket Response","서버로부터 받은 파일 목록 : "+it[0])
             Log.d("data type","받은 데이터 타입"+it[0]::class.java.simpleName)
             jsonArray = it[0] as JSONArray
@@ -52,6 +52,17 @@ class SocketClass() {
             Handler().postDelayed({
                 ProcessRes()
             },1500L)
+        }
+        private val responseVideo : Emitter.Listener = Emitter.Listener{
+            Log.d("Socket Response","서버로부터 받은 스트림 목록 : "+it)
+
+        }
+        fun callbackVideoPlay(ReqProcess:()->Unit){
+            // 서버에서 동영상을 받으면 준비완료
+            socket.on("Send",responseVideo)
+            Handler().postDelayed({
+                ReqProcess()
+            },1000L)
         }
     }
 }

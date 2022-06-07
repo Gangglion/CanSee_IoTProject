@@ -23,7 +23,6 @@ class VideolistAdapter(val context : Context, val videolist : MutableMap<Int,Str
         Log.d("adapter",video.toString())
         videoimg.setImageResource(R.drawable.videoicon)
         videoName.text = video[position]
-        Log.d("adapter",videoName.text.toString()+" // "+video[0])
 
         return view
     }

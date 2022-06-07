@@ -1,6 +1,8 @@
 var express = require('express');
 var http = require('http');
 const { Socket } = require('socket.io');
+var fs = require('fs');
+const { Console } = require('console');
 
 var socketio = require('socket.io')(http);
 
@@ -23,12 +25,29 @@ io.on('connection',function(socket){
     socket.on('ReqFilelist',function(){
         console.log('파일목록 리스트 클라이언트 측으로 전송')
 
-        var VideoFolder = "./"
-        // var VideoFolder = "/home/pi/Videos"
-        var fs = require('fs');
+        // var VideoFolder = "./"
+        var VideoFolder = "/home/pi/Videos"
         fs.readdir(VideoFolder,function(error,filelist){
             console.log('파일 리스트 : '+filelist)
             socket.emit("ResFilelist",filelist)
+        })
+    })
+
+    // 특정 파일 클릭했을때 스트림 열어서 그 영상 전송 시작
+    socket.on("PlayVideo",function(fileName){
+        console.log("플레이 요청 들어옴 : " + fileName)
+        var fileResource = "/home/pi/Videos/"+fileName
+
+        var stream = fs.createReadStream(fileResource,{flags:'r'})
+        var count = 0
+        stream.on('data',function(data){
+            count +=1
+            console.log('data count = '+count)
+            socket.emit("Send",data)
+        })
+        stream.on('end',function(){
+            console.log('End Streaming')
+            socket.emit('SendEnd')
         })
     })
 })

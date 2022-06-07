@@ -3,7 +3,11 @@ package com.IoTProject.canseeapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Adapter
+import android.widget.AdapterView
 import android.widget.ListView
+import java.net.Socket
 
 class VideolistActivity : AppCompatActivity() {
 
@@ -17,5 +21,15 @@ class VideolistActivity : AppCompatActivity() {
 
         val videoAdapter = VideolistAdapter(this,SocketClass.videoList)
         videolistView.adapter = videoAdapter
+
+        videolistView.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
+            // Log.d("Check",SocketClass.videoList[position])
+            SocketClass.socket.emit("PlayVideo",SocketClass.videoList[position])
+            SocketClass.callbackVideoPlay(ReqProcess={
+                Log.d("Ready?","동영상 준비됨?")
+            })
+        })
+
+
     }
 }
